@@ -1,0 +1,35 @@
+{
+  "name": "job-decision-career-navigation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Polski system zdobywania pracy — Job Decision & Career Navigation System",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "npm run clean && tsc -p tsconfig.json && tsc -p tsconfig.client.json && node scripts/copy-static.mjs",
+    "lint": "node scripts/lint.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit && tsc -p tsconfig.e2e.json --noEmit",
+    "validate:migrations": "node scripts/validate-migrations.mjs",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "test:browser": "npm run build && playwright test",
+    "verify:backup-restore": "npm run build && node scripts/backup-restore-exercise.mjs",
+    "check": "npm run lint && npm run typecheck && npm run validate:migrations && npm test && npm run verify:backup-restore && npm run test:browser",
+    "smoke:staging": "node scripts/staging-smoke.mjs",
+    "backup:data": "node scripts/backup.mjs",
+    "restore:data": "node scripts/restore.mjs",
+    "provision:admin": "node scripts/provision-admin.mjs",
+    "feature:flag": "node scripts/set-feature-flag.mjs",
+    "start": "node --enable-source-maps dist/server/index.js",
+    "dev": "npm run build && NODE_ENV=development node --watch --enable-source-maps dist/server/index.js"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.62.1",
+    "@types/node": "22.15.0",
+    "playwright-core": "1.62.1",
+    "typescript": "5.8.3"
+  }
+}

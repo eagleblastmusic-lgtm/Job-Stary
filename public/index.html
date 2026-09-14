@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Job — wklej ofertę i sprawdź, czy warto aplikować.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/styles.css">
+  <title>Job — sprawdź, czy warto aplikować</title>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#start" aria-label="Job — strona główna">JOB</a>
+    <button id="logoutButton" class="button button-ghost hidden" type="button">Wyloguj</button>
+  </header>
+
+  <main>
+    <section id="authView" class="auth-layout">
+      <div class="hero">
+        <p class="eyebrow">Polski system zdobywania pracy</p>
+        <h1>Wklej ofertę i sprawdź, czy warto aplikować.</h1>
+        <p class="lead">Porównamy ją z Twoim doświadczeniem i warunkami, których szukasz. Zobaczysz prosty wniosek, nie magiczny procent.</p>
+        <ul class="clean-list">
+          <li>✓ Najpierw fakty o Tobie, potem rekomendacja</li>
+          <li>✓ Zero wymyślonego doświadczenia</li>
+          <li>✓ Możesz zawsze podjąć własną decyzję</li>
+        </ul>
+      </div>
+      <div class="auth-card card">
+        <div class="tabs" role="group" aria-label="Logowanie lub rejestracja">
+          <button class="tab active" data-auth-tab="login" type="button">Logowanie</button>
+          <button class="tab" data-auth-tab="register" type="button">Załóż konto</button>
+        </div>
+        <form id="loginForm" class="stack">
+          <label>E-mail<input name="email" type="email" autocomplete="email" maxlength="254" required></label>
+          <label>Hasło<input name="password" type="password" autocomplete="current-password" maxlength="256" required></label>
+          <button class="button button-primary" type="submit">Zaloguj się</button>
+        </form>
+        <form id="registerForm" class="stack hidden">
+          <label>Imię<input name="name" autocomplete="name" required minlength="2" maxlength="80"></label>
+          <label>E-mail<input name="email" type="email" autocomplete="email" maxlength="254" required></label>
+          <label>Hasło<input name="password" type="password" autocomplete="new-password" minlength="10" maxlength="256" required></label>
+          <p class="hint">Minimum 10 znaków, w tym litera i cyfra.</p>
+          <label class="consent-row"><input name="acceptTerms" type="checkbox" required><span>Akceptuję <a href="/terms.html" target="_blank" rel="noopener">warunki wersji testowej</a>.</span></label>
+          <label class="consent-row"><input name="acceptPrivacy" type="checkbox" required><span>Zapoznałem/am się z <a href="/privacy.html" target="_blank" rel="noopener">informacją o prywatności</a>.</span></label>
+          <label class="consent-row"><input name="analyticsConsent" type="checkbox"><span>Zgadzam się na opcjonalną analitykę produktu. Tę zgodę można później zmienić.</span></label>
+          <button class="button button-primary" type="submit">Załóż konto i rozpocznij 7-dniowy trial</button>
+        </form>
+        <div id="authMessage" class="message" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="appView" class="app-layout hidden">
+      <nav class="mobile-nav" aria-label="Główna nawigacja">
+        <button data-view="start" class="nav-item active">Start</button>
+        <button data-view="profile" class="nav-item">Profil</button>
+        <button data-view="job" class="nav-item">Oferta</button>
+        <button data-view="applications" class="nav-item">Aplikacje</button>
+        <button data-view="privacy" class="nav-item">Dane</button>
+      </nav>
+
+      <div class="desktop-shell">
+        <aside class="sidebar card">
+          <p class="eyebrow">Twoje centrum</p>
+          <div id="userSummary" class="user-summary"></div>
+          <button data-view="start" class="side-link active">Start</button>
+          <button data-view="profile" class="side-link">Profil i Career Truth</button>
+          <button data-view="job" class="side-link">Wklej ofertę</button>
+          <button data-view="applications" class="side-link">Aplikacje</button>
+          <button data-view="privacy" class="side-link">Prywatność i plan</button>
+          <button id="adminLink" data-view="admin" class="side-link hidden">Diagnostyka</button>
+        </aside>
+
+        <div class="content">
+          <section data-screen="start" class="screen">
+            <div class="screen-heading">
+              <p class="eyebrow">Kreator startowy</p>
+              <h2 id="welcomeTitle">Dzień dobry</h2>
+              <p id="welcomeSubtitle">Przejdź przez 3 proste kroki, aby sprawdzić dopasowanie pierwszej oferty.</p>
+            </div>
+
+            <!-- Onboarding Wizard -->
+            <div id="onboardingWizard" class="card wizard-card">
+              <div class="wizard-header">
+                <div class="wizard-steps" role="tablist" aria-label="Kroki kreatora">
+                  <button type="button" role="tab" id="wizardTab1" class="wizard-step-tab active" data-wizard-tab="1" aria-selected="true" aria-controls="wizardStep1">
+                    <span class="wizard-step-badge">1</span>
+                    <span class="wizard-step-info">
+                      <span class="wizard-step-title">Preferencje</span>
+                      <span class="wizard-step-desc">Czego szukasz</span>
+                    </span>
+                  </button>
+                  <div class="wizard-step-divider" role="presentation" aria-hidden="true"></div>
+                  <button type="button" role="tab" id="wizardTab2" class="wizard-step-tab" data-wizard-tab="2" aria-selected="false" aria-controls="wizardStep2">
+                    <span class="wizard-step-badge">2</span>
+                    <span class="wizard-step-info">
+                      <span class="wizard-step-title">Twoje atuty</span>
+                      <span class="wizard-step-desc">Doświadczenie i CV</span>
+                    </span>
+                  </button>
+                  <div class="wizard-step-divider" role="presentation" aria-hidden="true"></div>
+                  <button type="button" role="tab" id="wizardTab3" class="wizard-step-tab" data-wizard-tab="3" aria-selected="false" aria-controls="wizardStep3">
+                    <span class="wizard-step-badge">3</span>
+                    <span class="wizard-step-info">
+                      <span class="wizard-step-title">Pierwsza oferta</span>
+                      <span class="wizard-step-desc">Werdykt i analiza</span>
+                    </span>
+                  </button>
+                </div>
+                <div class="wizard-progress-bar" role="progressbar" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" aria-label="Postęp konfiguracji">
+                  <div id="wizardProgressFill" class="wizard-progress-fill" style="width: 33%;"></div>
+                </div>
+              </div>
+
+              <!-- Wizard Step 1: Preferencje -->
+              <div id="wizardStep1" class="wizard-step-panel" role="tabpanel" aria-labelledby="wizardTab1">
+                <div class="wizard-panel-intro">
+                  <h3>Krok 1: Jakiej pracy szukasz i gdzie?</h3>
+                  <p class="hint">Podaj podstawowe informacje, aby system mógł natychmiast ocenić zgodność ofert.</p>
+                </div>
+                <form id="wizardFormStep1" class="form-grid compact">
+                  <label class="span-2">
+                    Stanowisko lub rola (możesz wpisać kilka po przecinku)
+                    <input name="wizardDesiredRoles" placeholder="np. Magazynier, Kierowca, Operator wózka, Programista" required autocomplete="off">
+                  </label>
+                  <div id="wizardRolesChips" class="roles-chips-preview span-2 hidden" aria-live="polite"></div>
+                  <label>
+                    Lokalizacja
+                    <input name="wizardLocation" placeholder="np. Gdynia, Warszawa, praca zdalna" required>
+                  </label>
+                  <label>
+                    Maksymalny dojazd (km)
+                    <input name="wizardCommuteKm" type="number" min="0" max="300" placeholder="30">
+                  </label>
+                  <label class="span-2">
+                    Minimalne wynagrodzenie (PLN brutto / mies.)
+                    <input name="wizardSalaryMin" type="number" min="0" step="100" placeholder="np. 5500 (opcjonalnie)">
+                  </label>
+                  <fieldset class="salary-mode-group span-2">
+                    <legend>Opcje wyświetlania ofert</legend>
+                    <label class="salary-mode-option">
+                      <input type="radio" name="wizardSalaryMode" value="EXCLUDE_LOWER" checked>
+                      <span>Wyświetlaj wszystkie oferty, oprócz tych które jawnie podają niższą kwotę</span>
+                    </label>
+                    <label class="salary-mode-option">
+                      <input type="radio" name="wizardSalaryMode" value="DISCLOSED_ONLY">
+                      <span>Wyświetlaj oferty tylko z podaną płacą</span>
+                    </label>
+                  </fieldset>
+                  <div class="wizard-nav span-2">
+                    <button type="submit" class="button button-primary">Zapisz i przejdź do atutów →</button>
+                    <button type="button" class="button button-ghost" data-view="profile">Otwórz pełny profil</button>
+                  </div>
+                </form>
+                <div id="wizardMsgStep1" class="message" aria-live="polite"></div>
+              </div>
+
+              <!-- Wizard Step 2: Doświadczenie i umiejętności -->
+              <div id="wizardStep2" class="wizard-step-panel hidden" role="tabpanel" aria-labelledby="wizardTab2">
+                <div class="wizard-panel-intro">
+                  <h3>Krok 2: Co jest prawdą o Twoich kwalifikacjach?</h3>
+                  <p class="hint">Nie musisz uzupełniać wszystkiego od razu. Wystarczy plik CV lub jedna kluczowa umiejętność, aby system sprawdził ofertę.</p>
+                </div>
+                <div class="grid two">
+                  <div class="card wizard-subcard">
+                    <h4>Opcja A: Wgraj plik CV</h4>
+                    <p class="hint">PDF, DOCX lub TXT. Plik jest przetwarzany prywatnie — system nie wymyśla faktów.</p>
+                    <form id="wizardCvForm" class="stack">
+                      <label>Wybierz plik CV<input id="wizardCvFile" name="cv" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required></label>
+                      <button class="button button-secondary" type="submit">Wczytaj CV</button>
+                    </form>
+                    <div id="wizardCvMsg" class="message" aria-live="polite"></div>
+                  </div>
+                  <div class="card wizard-subcard">
+                    <h4>Opcja B: Dodaj umiejętność ręcznie</h4>
+                    <p class="hint">Wpisz uprawnienie, narzędzie lub certyfikat (np. UDT, prawo jazdy kat. B, Excel, angielski B2).</p>
+                    <form id="wizardFactForm" class="stack">
+                      <label>Nazwa umiejętności / uprawnienia<input id="wizardFactValue" name="value" placeholder="np. UDT wózki widłowe" required></label>
+                      <button class="button button-secondary" type="submit">Dodaj do profilu</button>
+                    </form>
+                    <div id="wizardFactMsg" class="message" aria-live="polite"></div>
+                  </div>
+                </div>
+                <div id="wizardFactsPreview" class="wizard-facts-preview section-gap hidden">
+                  <p class="hint"><strong>Twoje zapisane atuty:</strong> <span id="wizardFactsSummary"></span></p>
+                </div>
+                <div class="wizard-nav section-gap">
+                  <button type="button" id="wizardBackToStep1" class="button button-secondary">← Wróć</button>
+                  <button type="button" id="wizardGoToStep3" class="button button-primary">Dalej: Sprawdź pierwszą ofertę →</button>
+                  <button type="button" id="wizardSkipStep2" class="button button-ghost">Pomiń ten krok</button>
+                </div>
+              </div>
+
+              <!-- Wizard Step 3: Sprawdź ofertę -->
+              <div id="wizardStep3" class="wizard-step-panel hidden" role="tabpanel" aria-labelledby="wizardTab3">
+                <div class="wizard-panel-intro">
+                  <h3>Krok 3: Wklej ofertę i zobacz werdykt</h3>
+                  <p class="hint">Wklej dowolne ogłoszenie z Pracuj.pl, OLX lub LinkedIn. System wskaże, co pasuje, czego brakuje i czy warto aplikować.</p>
+                </div>
+                <form id="wizardJobForm" class="stack">
+                  <label>
+                    Treść ogłoszenia
+                    <textarea id="wizardJobText" name="text" rows="8" maxlength="100000" placeholder="Wklej tutaj treść ogłoszenia o pracę..." required></textarea>
+                  </label>
+                  <div class="wizard-sample-action">
+                    <button type="button" id="wizardInsertSampleOffer" class="mini-button">Wstaw przykładowe ogłoszenie</button>
+                  </div>
+                  <div class="wizard-nav">
+                    <button type="button" id="wizardBackToStep2" class="button button-secondary">← Wróć</button>
+                    <button type="submit" class="button button-primary">Przeanalizuj ofertę ✨</button>
+                    <button type="button" class="button button-ghost" data-view="job">Wklej w pełnym widoku</button>
+                  </div>
+                  <div id="wizardJobMsg" class="message" aria-live="polite"></div>
+                </form>
+              </div>
+            </div>
+
+            <div id="startStatus" class="card status-card"></div>
+          </section>
+
+          <section data-screen="profile" class="screen hidden">
+            <div class="screen-heading"><p class="eyebrow">Career Truth</p><h2>Co jest prawdą o Twoim doświadczeniu?</h2><p>AI nie może wpisać do CV niczego, czego nie potwierdzisz.</p></div>
+            <form id="profileForm" class="card form-grid">
+              <label class="span-2">
+                Jakiej pracy szukasz? (możesz wpisać kilka po przecinku)
+                <input name="desiredRoles" placeholder="np. magazynier, operator wózka, kierowca" autocomplete="off">
+              </label>
+              <div id="profileRolesChips" class="roles-chips-preview span-2 hidden" aria-live="polite"></div>
+              <label>Lokalizacja<input name="location" placeholder="np. Gdynia"></label>
+              <label>Dojazd maks. (km)<input name="commuteKm" type="number" min="0" max="300"></label>
+              <label>Minimalna pensja brutto / mies.<input name="salaryMin" type="number" min="0" step="100"></label>
+              <label>Dostępność<input name="availability" placeholder="np. od zaraz"></label>
+              <fieldset class="salary-mode-group span-2">
+                <legend>Opcje wyświetlania ofert</legend>
+                <label class="salary-mode-option">
+                  <input type="radio" name="salaryMode" value="EXCLUDE_LOWER" checked>
+                  <span>Wyświetlaj wszystkie oferty, oprócz tych które jawnie podają niższą kwotę</span>
+                </label>
+                <label class="salary-mode-option">
+                  <input type="radio" name="salaryMode" value="DISCLOSED_ONLY">
+                  <span>Wyświetlaj oferty tylko z podaną płacą</span>
+                </label>
+              </fieldset>
+              <div class="form-fieldset-group span-2">
+                <fieldset><legend>Tryb pracy</legend><label><input type="checkbox" name="remote" value="REMOTE"> zdalnie</label><label><input type="checkbox" name="remote" value="HYBRID"> hybrydowo</label><label><input type="checkbox" name="remote" value="ONSITE"> stacjonarnie</label></fieldset>
+                <fieldset><legend>Umowa</legend><label><input type="checkbox" name="contract" value="UOP"> umowa o pracę</label><label><input type="checkbox" name="contract" value="B2B"> B2B</label><label><input type="checkbox" name="contract" value="UZ"> zlecenie</label></fieldset>
+                <fieldset><legend>Zmiany</legend><label><input type="checkbox" name="allowNights"> mogę pracować w nocy</label><label><input type="checkbox" name="allowWeekends"> mogę pracować w weekendy</label></fieldset>
+              </div>
+              <button class="button button-primary span-2" type="submit">Zapisz profil</button>
+            </form>
+
+            <div class="grid two section-gap">
+              <div class="card">
+                <h3>Dodaj CV</h3>
+                <p>PDF, DOCX, TXT lub Markdown. Plik jest przechowywany prywatnie. Wykryte fakty będą oznaczone jako „do potwierdzenia”.</p>
+                <form id="cvUploadForm" class="stack">
+                  <label>Plik CV<input id="cvFile" name="cv" type="file" accept=".pdf,.docx,.txt,.md,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required></label>
+                  <button class="button button-secondary" type="submit">Wczytaj CV</button>
+                </form>
+                <div id="cvUploadMessage" class="message" aria-live="polite"></div>
+              </div>
+              <div class="card">
+                <h3>Dodaj fakt ręcznie</h3>
+                <form id="factForm" class="stack">
+                  <label>Rodzaj<select name="type"><option value="SKILL">Umiejętność</option><option value="TOOL">Narzędzie / program</option><option value="CREDENTIAL">Uprawnienie</option><option value="LANGUAGE">Język</option></select></label>
+                  <label>Wartość<input name="value" placeholder="np. Excel" required></label>
+                  <label>Poziom (opcjonalnie)<input name="level" placeholder="np. średniozaawansowany"></label>
+                  <button class="button button-secondary" type="submit">Dodaj jako potwierdzone</button>
+                </form>
+              </div>
+            </div>
+
+            <div class="card section-gap">
+              <div class="row-between"><div><h3>Fakty zawodowe</h3><p class="hint">Do CV trafiają tylko fakty potwierdzone.</p></div><span id="factsCount" class="badge"></span></div>
+              <div id="factsList" class="fact-list"></div>
+            </div>
+
+            <div class="card section-gap">
+              <h3>Doświadczenie</h3>
+              <form id="experienceForm" class="form-grid compact">
+                <label>Firma<input name="employer" maxlength="200" required></label><label>Stanowisko<input name="title" maxlength="200" required></label>
+                <label>Od<input name="startDate" type="month"></label><label>Do<input name="endDate" type="month"></label>
+                <label class="span-2">Opis<input name="description" maxlength="10000"></label>
+                <button class="button button-secondary span-2" type="submit">Dodaj doświadczenie</button>
+              </form>
+              <div id="experiencesList" class="simple-list"></div>
+            </div>
+
+            <div class="card section-gap">
+              <h3>Wykształcenie</h3>
+              <p class="hint">Te informacje mogą trafić do generowanego CV. Wpisuj wyłącznie prawdziwe dane.</p>
+              <form id="educationForm" class="form-grid compact">
+                <label class="span-2">Szkoła / uczelnia<input name="institution" maxlength="200" required></label>
+                <label>Kierunek<input name="field" maxlength="200"></label>
+                <label>Poziom / tytuł<input name="degree" maxlength="120" placeholder="np. technik, licencjat, magister"></label>
+                <label>Od<input name="startDate" type="month"></label><label>Do<input name="endDate" type="month"></label>
+                <label class="span-2">Opis (opcjonalnie)<input name="description" maxlength="10000"></label>
+                <button class="button button-secondary span-2" type="submit">Dodaj wykształcenie</button>
+              </form>
+              <div id="educationMessage" class="message" aria-live="polite"></div>
+              <div id="educationList" class="simple-list"></div>
+            </div>
+          </section>
+
+          <section data-screen="job" class="screen hidden">
+            <div class="screen-heading"><p class="eyebrow">Najważniejszy przepływ MVP</p><h2>Wklej ofertę pracy</h2><p>Nie potrzebujesz agregatora ofert. Wklej tekst ogłoszenia, które naprawdę rozważasz.</p></div>
+            <form id="jobForm" class="card stack">
+              <label>Treść oferty<textarea name="text" rows="14" maxlength="100000" placeholder="Wklej pełną treść ogłoszenia..." required></textarea></label>
+              <button class="button button-primary" type="submit">Sprawdź, czy warto aplikować</button>
+              <div id="jobMessage" class="message" aria-live="polite"></div>
+            </form>
+            <div id="decisionArea" class="section-gap"></div>
+          </section>
+
+          <section data-screen="applications" class="screen hidden">
+            <div class="screen-heading"><p class="eyebrow">Tracker</p><h2>Twoje aplikacje</h2><p>Jedno miejsce na status i wynik rekrutacji.</p></div>
+            <div id="applicationsList" class="stack"></div>
+          </section>
+
+          <section data-screen="privacy" class="screen hidden">
+            <div class="screen-heading"><p class="eyebrow">Prywatność i plan</p><h2>Masz kontrolę nad danymi</h2></div>
+            <div class="grid two">
+              <div class="card plan-card"><h3>Eksport danych</h3><p>Pobierz kopię swoich danych w JSON.</p><button id="exportButton" class="button button-secondary" type="button">Pobierz dane</button></div>
+              <div class="card plan-card"><h3>Twój plan</h3><div id="billingStatus"></div></div>
+            </div>
+            <div class="card section-gap">
+              <h3>Zgody i dokumenty</h3>
+              <div id="consentStatus" class="simple-list" aria-live="polite"></div>
+              <div class="consent-block">
+                <label class="consent-row"><input id="analyticsConsent" type="checkbox"><span>Zgoda na opcjonalną analitykę produktu.</span></label>
+                <button id="saveConsentButton" class="button button-secondary" type="button">Zapisz zgodę analityczną</button>
+              </div>
+              <p class="hint legal-links"><a href="/privacy.html" target="_blank" rel="noopener">Informacja o prywatności</a> · <a href="/terms.html" target="_blank" rel="noopener">Warunki wersji testowej</a></p>
+            </div>
+            <div class="card danger-card section-gap">
+              <h3>Usuń konto</h3>
+              <p>Usuwa konto i dane aplikacji. Operacji nie można cofnąć. Dla bezpieczeństwa potwierdź ją aktualnym hasłem.</p>
+              <div class="danger-form">
+                <label>Aktualne hasło<input id="deletePassword" type="password" autocomplete="current-password" maxlength="256"></label>
+                <label>Wpisz <strong>USUŃ KONTO</strong><input id="deleteConfirmation" autocomplete="off"></label>
+                <button id="deleteAccountButton" class="button button-danger" type="button">Usuń konto</button>
+              </div>
+            </div>
+          </section>
+
+          <section data-screen="admin" class="screen hidden">
+            <div class="screen-heading"><p class="eyebrow">Administracja</p><h2>Diagnostyka</h2></div>
+            <pre id="adminDiagnostics" class="card code-card"></pre>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  <script type="module" src="/app.js"></script>
+  <script type="module" src="/accountDeletion.js"></script>
+  <script type="module" src="/education.js"></script>
+</body>
+</html>

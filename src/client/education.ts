@@ -1,0 +1,20 @@
+import './careerTruthControls.js';
+import './today.js';
+import './notifications.js';
+import './interviewPack.js';
+import './jobSearch.js';
+import './jobFeed.js';
+import './bottleneck.js';
+import './localLabour.js';
+import './effectiveWage.js';
+import './skillRoi.js';
+import './learning.js';
+import './careerTransition.js';
+import './outcomeInbox.js';
+import './strategy.js';
+
+export {};
+type Education={id:string;institution:string;field:string|null;degree:string|null;startDate:string|null;endDate:string|null;description:string|null};type CareerTruthResponse={education:Education[]};const $=<T extends Element=HTMLElement>(selector:string):T|null=>document.querySelector(selector) as T|null;const esc=(value:unknown):string=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]??char));async function api<T>(path:string,init:RequestInit={}):Promise<T>{const response=await fetch(path,{...init,headers:{...(init.body?{'content-type':'application/json'}:{}),...(init.headers??{})}});const data=await response.json().catch(()=>({})) as T&{error?:{message?:string}};if(!response.ok)throw new Error(data.error?.message??`HTTP ${response.status}`);return data;}
+function renderEducation(records:Education[]):void{const list=$('#educationList');if(!list)return;list.innerHTML=records.length?records.map(record=>{const details=[record.degree,record.field].filter(Boolean).map(esc).join(' · ');const period=[record.startDate,record.endDate].filter(Boolean).map(esc).join(' – ');return `<div class="fact-item education-item"><strong>${esc(record.institution)}</strong>${details?`<div>${details}</div>`:''}${period?`<div class="hint">${period}</div>`:''}${record.description?`<div class="hint">${esc(record.description)}</div>`:''}<div class="fact-actions"><button class="mini-button bad" data-delete-education="${esc(record.id)}" aria-label="Usuń wykształcenie ${esc(record.institution)}">Usuń</button></div></div>`;}).join(''):'<p class="hint">Brak informacji o wykształceniu.</p>';}
+async function refreshEducation():Promise<void>{try{const data=await api<CareerTruthResponse>('/api/career-truth');renderEducation(data.education);}catch{/* auth state controlled by main app */}}
+const form=$<HTMLFormElement>('#educationForm');form?.addEventListener('submit',async event=>{event.preventDefault();const message=$('#educationMessage');const data=new FormData(form);const value=(key:string):string|null=>{const result=String(data.get(key)??'').trim();return result||null;};try{await api('/api/education',{method:'POST',body:JSON.stringify({institution:value('institution'),field:value('field'),degree:value('degree'),startDate:value('startDate'),endDate:value('endDate'),description:value('description')})});form.reset();if(message){message.textContent='Wykształcenie zapisane.';message.className='message success';}await refreshEducation();}catch(error){if(message){message.textContent=(error as Error).message;message.className='message error';}}});$('#educationList')?.addEventListener('click',async event=>{const button=(event.target as Element).closest<HTMLButtonElement>('[data-delete-education]');if(!button)return;const message=$('#educationMessage');try{await api(`/api/education/${button.dataset.deleteEducation}`,{method:'DELETE'});if(message){message.textContent='Wykształcenie usunięte.';message.className='message success';}await refreshEducation();}catch(error){if(message){message.textContent=(error as Error).message;message.className='message error';}}});document.querySelectorAll('[data-view="profile"]').forEach(element=>element.addEventListener('click',()=>{void refreshEducation();}));window.addEventListener('hashchange',()=>{if(location.hash==='#profile')void refreshEducation();});if(location.hash==='#profile')void refreshEducation();

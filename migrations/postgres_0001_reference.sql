@@ -1,0 +1,5 @@
+-- Reference target for PostgreSQL production migration.
+-- Runtime MVP currently uses SQLite through node:sqlite to keep the first release dependency-light and verifiable.
+-- Before external beta, migrate these entities to PostgreSQL and preserve UUID/text identifiers and JSON fields.
+-- The canonical entity list and constraints are represented in migrations/0001_init.sql.
+-- This file intentionally documents the migration target rather than pretending a PostgreSQL migration was exercised.

@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: job-mvp-staging
+    runtime: docker
+    region: frankfurt
+    plan: free
+    branch: main
+    autoDeployTrigger: checksPass
+    healthCheckPath: /api/health
+    dockerfilePath: ./Dockerfile
+    numInstances: 1
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: DATA_DIR
+        value: /app/data
+      - key: DATABASE_PATH
+        value: /app/data/job.sqlite
+      - key: TRUST_PROXY
+        value: "true"
+      - key: SESSION_DAYS
+        value: "1"
+      - key: MAX_UPLOAD_BYTES
+        value: "5242880"
